@@ -1,0 +1,684 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>document</title>
+    <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+        <!--Complete karo -->
+        <div class="nav-bar"></div> 
+
+
+        <div class="d-flex h-100">
+            <div id="leftcontainer" class="h-100">
+                <ul>
+                    <a href="searching.html"><li>searching and sorting</li></a>
+                   <a href="array.html"><li>arrays</li></a>
+                   <a href="tree.html"><li>trees</li></a>
+                   <a href="graph.html"><li>graphs</li></a>
+                   <a href="stack.html"><li>stack</li></a>
+                   <a href="string.html"><li>strings</li></a>
+                   <a href="2d.html"><li>2d-arrays</li></a>
+                   <a href="linked list.html"><li>linked list</li></a>
+                   <a href="queue.html"><li>Queue</li></a>
+                   <a href="recursion.html"><li>Recursion</li></a>
+                </ul>
+            </div>
+            <div id="rightcontainer" class="w-100">
+                <div class="programs w-100" id="Graphs">
+                    <h2 class="heading t-head">Graphs</h2>
+<h2 class="heading"> ENTER THE VERTICES AND EDGES AND REPRESENT IN ADJACENCY MATRIX AND PRINT IT.</h2>
+<pre>
+    #include&lt;stdio.h&gt;
+        #include&lt;conio.h&gt;
+        int elemLoc(int elem, int n, int arr[])
+        {
+            int i;
+            for (i = 0; i < n; i++)
+            {
+                if (arr[i] == elem)
+                    return i;
+            }
+            return -1;
+        }
+        
+        int main()
+        {
+            int size = 5, vertex[5], adjacentMat[5][5], indx = 0, src, dest, i,j;
+            char ch;
+            for (i = 0; i < size; i++)
+            {
+                for (j = 0; j < size; j++)
+                {
+                    adjacentMat[i][j] = 0;
+                }
+            }
+            do
+            {
+                printf("Press 1: Insert Vertex\nPress 2: Insert Edge\nPress 3: Exit\n");
+                ch = getche();
+                printf("\n");
+                if (ch == '1')
+                {
+                    if (indx < size)
+                    {
+                        printf("Enter Value of Vertex:\t");
+                        scanf("%d", &vertex[indx]);
+                        printf("Vertex Added\n");
+                        indx++;
+                    }
+                    else{
+                        printf("Graph is Full\n");
+                    }
+                }
+                else if (ch == '2')
+                {
+                    printf("Enter Source:\t");
+                    scanf("%d", &src);
+                    printf("Enter Destination:\t");
+                    scanf("%d", &dest);
+                    if ((src = elemLoc(src, size, vertex)) == -1)
+                        printf("Invalid Source\n");
+                    else if ((dest = elemLoc(dest, size, vertex)) == -1)
+                        printf("Invalid Destination\n");
+                    else{
+                        adjacentMat[src][dest] = adjacentMat[dest][src] = 1;
+                        printf("Edge Inserted\n");
+                    }   
+                }        
+                else if(ch == '3'){
+                    printf("Exiting ....\n");
+                }
+                else{
+                    printf("Invalid Choice\n");
+                }
+            } while (ch != '3');
+            printf("Printing Adjacent Matrix\n");
+            for (i = 0; i < size; i++)
+            {
+                for (j = 0; j < size; j++)
+                {
+                    printf("%d ", adjacentMat[i][j]);
+                }
+                printf("\n");
+            }
+            
+            return 0;
+        }
+            
+</pre>
+<h2 class="heading">output</h2>
+<pre>
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Exit
+    1
+    Enter Value of Vertex:  56
+    Vertex Added
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Exit
+    1
+    Enter Value of Vertex:  78
+    Vertex Added
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Exit
+    1
+    Enter Value of Vertex:  47
+    Vertex Added
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Exit
+    1
+    Enter Value of Vertex:  49
+    Vertex Added
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Exit
+    2
+    Enter Source:   47
+    Enter Destination:      78
+    Edge Inserted
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Exit
+    2
+    Enter Source:   49
+    Enter Destination:      47
+    Edge Inserted
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Exit
+    3
+    Exiting ....
+    Printing Adjacent Matrix
+    0 0 0 0 0
+    0 0 1 0 0
+    0 1 0 1 0
+    0 0 1 0 0
+    0 0 0 0 0 
+</pre>
+<h2 class="heading"> CREATE THE GRAPH AS A ADJACENCY LIST WITH OPERATIONS SUCH AS INSERTION, DELETION</h2>
+<pre>
+    #include&lt;stdio.h&gt;
+        #include&lt;stdlib.h&gt;
+        #include&lt;conio.h&gt;
+        struct edge
+        {
+            int val;
+            struct edge *next;
+        };
+        typedef struct edge Edge;
+        struct vertex
+        {
+            int val;
+            struct vertex *next;
+            Edge *ed;
+        };
+        typedef struct vertex Vertex;
+        
+        Vertex *search(Vertex *start, int key)
+        {
+            if (start == NULL)
+                return NULL;
+            while (start != NULL)
+            {
+                if (start->val == key)
+                    return start;
+                start = start->next;
+            }
+            return NULL;
+        }
+        
+        Edge *searchEdge(Edge *start, int key)
+        {
+            if (start == NULL)
+                return NULL;
+            while (start != NULL)
+            {
+                if (start->val == key)
+                    return start;
+                start = start->next;
+            }
+            return NULL;
+        }
+        
+        int insert(Vertex **start, Vertex **end, int value)
+        {
+            Vertex *nn;
+            if (search(*start, value))
+            {
+                printf("Duplicate values not allowed\n");
+                return 0;
+            }
+        
+            if (*start == NULL)
+            {
+                nn = (Vertex *)malloc(sizeof(Vertex));
+                if (nn == NULL)
+                {
+                    return 0;
+                }
+        
+                nn->val = value;
+                nn->ed = NULL;
+                nn->next = NULL;
+        
+                (*start) = (*end) = nn;
+                return 1;
+            }
+            else
+            {
+                nn = (Vertex *)malloc(sizeof(Vertex));
+                if (nn == NULL)
+                {
+                    return 0;
+                }
+                nn->val = value;
+                nn->ed = NULL;
+                nn->next = NULL;
+                (*end)->next = nn;
+                (*end) = nn;
+                return 1;
+            }
+        }
+        
+        int insEdge(Vertex *start, int src, int dest)
+        {
+            Vertex *srcptr = search(start, src), *destptr = search(start, dest);
+            Edge *nn;
+            if (srcptr != NULL && destptr != NULL)
+            {
+                if (searchEdge(srcptr->ed, dest) != NULL)
+                {
+                    printf("Duplicate Edge Not Allowed\n");
+                    return 0;
+                }
+        
+                nn = (Edge *)malloc(sizeof(Edge));
+                if (nn == NULL)
+                {
+                    printf("Insufficient Memory\n");
+                    return 0;
+                }
+        
+                nn->val = dest;
+                nn->next = srcptr->ed;
+                srcptr->ed = nn;
+                return 1;
+            }
+            return 0;
+        }
+        
+        void delAllEdge(Edge *start)
+        {
+            Edge *temp;
+            while (start != NULL)
+            {
+                temp = start;
+                start = start->next;
+                free(temp);
+            }
+        }
+        
+        int delVertex(Vertex **start, Vertex **end, int value)
+        {
+            Vertex *srch = search(*start, value), *prev = *start;
+            if (srch == NULL)
+            {
+                printf("Element Not Found\n");
+                return 0;
+            }
+            if (*start == *end)
+            {
+                delAllEdge(srch->ed);
+                free(srch);
+                *start = *end = NULL;
+                return 1;
+            }
+            else if (*start == srch)
+            {
+                delAllEdge(srch->ed);
+                (*start) = srch->next;
+                free(srch);
+                return 1;
+            }
+            else
+            {
+                delAllEdge(srch->ed);
+                while (prev->next != srch)
+                {
+                    prev = prev->next;
+                }
+                prev->next = srch->next;
+                free(srch);
+                return 1;
+            }
+            return 0;
+        }
+        
+        void printList(Vertex *start)
+        {
+            while (start != NULL)
+            {
+                printf("%d ", start->val);
+                start = start->next;
+            }
+        }
+        
+        int main()
+        {
+            Vertex *start = NULL, *end = NULL;
+            int src, dest, val;
+        
+            char ch;
+            do
+            {
+                printf("\nPress 1: Insert Vertex\nPress 2: Insert Edge\nPress 3: Delete Vertex\nPress 4: Exit\n");
+                ch = getche();
+                printf("\n");
+                if (ch == '1')
+                {
+                    printf("Enter Value of Vertex:\t");
+                    scanf("%d", &val);
+                    if (insert(&start, &end, val))
+                    {
+                        printf("Vertex Inserted Successfully\n");
+                    } 
+                }
+                else if (ch == '2')
+                {
+                    printf("Enter Source:\t");
+                    scanf("%d", &src);
+                    printf("Enter Destination:\t");
+                    scanf("%d", &dest);
+                    if (insEdge(start, src, dest))
+                    {
+                        printf("Edge Inserted Successfully\n");
+                    }       
+                }
+                else if (ch == '4')
+                {
+                    printf("Exiting ....\n");
+                }
+                else if (ch == '3')
+                {
+                    printf("Enter Value of Vertex to be deleted:\t");
+                    scanf("%d", &val);
+                    if (delVertex(&start, &end, val))
+                    {
+                        printf("Vertex Deleted Successfully\n");
+                    } 
+                }
+                else
+                {
+                    printf("Invalid Choice\n");
+                }
+                printf("Printing All Vertex\n");
+                printList(start);
+            } while (ch != '4');
+            return 0;
+        }
+            
+</pre>
+<h2 class="heading">output</h2>
+<pre>
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Delete Vertex
+    Press 4: Exit
+    1
+    Enter Value of Vertex:  78
+    Vertex Inserted Successfully
+    Printing All Vertex
+    78 
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Delete Vertex
+    Press 4: Exit
+    1
+    Enter Value of Vertex:  25
+    Vertex Inserted Successfully
+    Printing All Vertex
+    78 25 
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Delete Vertex
+    Press 4: Exit
+    2
+    Enter Source:   78
+    Enter Destination:      25
+    Edge Inserted Successfully
+    Printing All Vertex
+    78 25
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Delete Vertex
+    Press 4: Exit
+    1
+    Enter Value of Vertex:  578
+    Vertex Inserted Successfully
+    Printing All Vertex
+    78 25 578
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Delete Vertex
+    Press 4: Exit
+    2
+    Enter Source:   78
+    Enter Destination:      578
+    Edge Inserted Successfully
+    Printing All Vertex
+    78 25 578
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Delete Vertex
+    Press 4: Exit
+    3
+    Enter Value of Vertex to be deleted:    578
+    Vertex Deleted Successfully
+    Printing All Vertex
+    78 25 
+    Press 1: Insert Vertex
+    Press 2: Insert Edge
+    Press 3: Delete Vertex
+    Press 4: Exit
+    4
+    Exiting ....
+    Printing All Vertex
+    78 25
+</pre>
+<h2 class="heading"> TRAVERSE THE ADJACENT MATRIX WITH DEPTH FIRST SEARCH</h2>
+<pre>
+    #include&lt;stdio.h&gt;
+        #include&lt;conio.h&gt;
+        #include&lt;stdlib.h&gt;
+        struct node
+        {
+            int data;
+            struct node *next;
+        };
+        typedef struct node Node;
+        int isEmpty(Node *top)
+        {
+            if (top == NULL)
+            {
+                return 1;
+            }
+            return 0;
+        }
+        
+        int isFull(Node *ptr)
+        {
+            if (ptr == NULL)
+            {
+                return 1;
+            }
+            return 0;
+        }
+        
+        int *push(Node **top, int val)
+        {
+            Node *nn;
+            nn = (Node *)malloc(sizeof(Node));
+            if (isFull(nn))
+            {
+                return NULL;
+            }
+            nn->data = val;
+            nn->next = *top;
+            *top = nn;
+            return &(nn->data);
+        }
+        
+        int pop(Node **top)
+        {
+            Node *temp;
+            if (isEmpty(*top))
+            {
+                return 0;
+            }
+            temp = *top;
+            (*top) = temp->next;
+            free(temp);
+            return 1;
+        }
+        
+        int *peek(Node *top)
+        {
+            if (isEmpty(top))
+            {
+                return NULL;
+            }
+        
+            return &(top->data);
+        }
+        int elemLoc(int elem, int n, int arr[])
+        {
+            int i;
+            for (i = 0; i < n; i++)
+            {
+                if (arr[i] == elem)
+                    return i;
+            }
+            return -1;
+        }
+        void DFS(int adjacent[5][5], int ver[], int startInd)
+        {
+            int visited[5] = {0, 0, 0, 0, 0}, i;
+            Node *top = NULL;
+            push(&top, startInd);
+            while (!isEmpty(top))
+            {
+                int node = *peek(top);
+                pop(&top);
+                if (!visited[node])
+                {
+                    printf("%d ", ver[node]);
+                    visited[node] = 1;
+                    for (i = 0; i < 5; i++)
+                    {
+                        if (adjacent[node][i] && !visited[i])
+                        {
+                            push(&top, i);
+                        }
+                    }
+                }
+            }
+        }
+        int main()
+        {
+            int size = 5, vertex[5] = {1, 2, 3, 4, 5};
+        
+            int adjacentMat[5][5] = {{0, 1, 1, 0, 0}, {1, 0, 0, 1, 1}, {1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 1, 0, 0, 0}};
+            printf("Printing Depth First Search Traversal\n");
+            DFS(adjacentMat, vertex, 0);
+            return 0;
+        }
+</pre>
+<h2 class="heading">output</h2>
+<pre>
+    Printing Depth First Search Traversal
+    1 3 2 5 4
+</pre>
+<h2 class="heading"> TRAVERSE THE ADJACENT MATRIX WITH BREADTH FIRST SEARCH</h2>
+<pre>
+    #include&lt;stdio.h&gt;
+        #include&lt;conio.h&gt;
+        #include&lt;stdlib.h&gt;
+        struct Node
+        {
+            int data;
+            struct Node *next;
+        };
+        typedef struct Node node;
+        
+        int isEmpty(node *front)
+        {
+            if (front == NULL)
+            {
+                return 1;
+            }
+            return 0;
+        }
+        
+        int isFull(node *ptr)
+        {
+            if (ptr == NULL)
+            {
+                return 1;
+            }
+            return 0;
+        }
+        
+        int *enqueue(node **rear, node **front, int value)
+        {
+            node *nn;
+            nn = (node *)malloc(sizeof(node));
+            if (isFull(nn))
+            {
+                return NULL;
+            }
+            nn->data = value;
+            nn->next = NULL;
+            if (isEmpty(*front))
+            {
+                *front = nn;
+            }
+            else
+            {
+                (*rear)->next = nn;
+            }
+            *rear = nn;
+            return &(nn->data);
+        }
+        
+        int dequeue(node **rear, node **front)
+        {
+            node *temp;
+            if (isEmpty(*front))
+            {
+                return 0;
+            }
+            temp = (*front);
+            if ((*front) == (*rear))
+            {
+                *front = *rear = NULL;
+            }
+            else{
+                (*front) = temp -> next;
+            }
+            free(temp);
+            return 1;
+        }
+        
+        int *peek(node *front)
+        {
+            if (isEmpty(front))
+            {
+                return NULL;
+            }
+            return &(front->data);
+        }
+        
+        void BFS(int adjacent[5][5], int ver[], int startInd)
+        {
+            int visited[5] = {0, 0, 0, 0, 0}, i;
+            node *front = NULL, *rear = NULL;
+            enqueue(&rear, &front, startInd);
+            while (!isEmpty(front))
+            {
+                int node = *peek(front);
+                dequeue(&rear, &front);
+                if (!visited[node])
+                {
+                    printf("%d ", ver[node]);
+                    visited[node] = 1;
+                    for (i = 0; i < 5; i++)
+                    {
+                        if (adjacent[node][i] && !visited[i])
+                        {
+                            enqueue(&rear, &front, i);
+                        }
+                    }
+                }
+            }
+        }
+        int main()
+        {
+            int vertex[5] = {1, 2, 3, 4, 5};
+        
+            int adjacentMat[5][5] = {{0, 1, 1, 0, 0}, {1, 0, 0, 1, 1}, {1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 1, 0, 0, 0}};
+            printf("Printing Breadth First Search Traversal\n");
+            BFS(adjacentMat, vertex, 0);
+            return 0;
+        }
+            
+</pre>
+<h2 class="heading">output</h2>
+<pre>
+    Printing Breadth First Search Traversal
+    1 2 3 4 5 
+</pre>

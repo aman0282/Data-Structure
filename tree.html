@@ -1,0 +1,1733 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>document</title>
+    <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+        <!--Complete karo -->
+        <div class="nav-bar"></div> 
+
+
+        <div class="d-flex h-100">
+            <div id="leftcontainer" class="h-100">
+                <ul>
+                    <a href="searching.html"><li>searching and sorting</li></a>
+                   <a href="array.html"><li>arrays</li></a>
+                   <a href="tree.htmls"><li>trees</li></a>
+                   <a href="graph.html"><li>graphs</li></a>
+                   <a href="stack.html"><li>stack</li></a>
+                   <a href="string.html"><li>strings</li></a>
+                   <a href="2d.html"><li>2d-arrays</li></a>
+                   <a href="linked list.html"><li>linked list</li></a>
+                   <a href="queue.html"><li>Queue</li></a>
+                   <a href="recursion.html"><li>Recursion</li></a>
+                </ul>
+            </div>
+            <div id="rightcontainer" class="w-100">
+                <div class="programs w-100" id="Trees">
+                    <h2 class="heading t-head">Trees</h2>
+                    <h2 class="heading">CONSTRUCT BINARY TREE FROM PREORDER AND INORDER TRAVERSAL</h2>
+                    <pre>
+                        #include&lt;stdio.h&gt;
+                            #include&lt;stdlib.h&gt;
+                            
+                            struct node
+                            {
+                                int data;
+                                struct node *left;
+                                struct node *right;
+                            };
+                            typedef struct node Node;
+                            
+                            Node* cntructTree(int preorder[], int inorder[], int inStart, int inEnd){
+                                static int crrInd = 0;
+                                int i;
+                                Node *root;
+                                if (inStart > inEnd)
+                                    return NULL;
+                            
+                                root = (Node*)malloc(sizeof(Node));
+                                root->data = preorder[crrInd++];
+                                root->left = root->right = NULL;
+                            
+                                if (inStart == inEnd)
+                                    return root;
+                            
+                                for (i = inStart; i <= inEnd; i++) {
+                                    if (inorder[i] == root->data)
+                                        break;
+                                }
+                            
+                                root->left = cntructTree(preorder, inorder, inStart, i-1);
+                                root->right = cntructTree(preorder, inorder, i+1, inEnd);
+                            
+                                return root;
+                            }
+                            
+                            void inorderTraversal(Node* root) {
+                                if (root == NULL) {
+                                    return;
+                                }
+                                inorderTraversal(root->left);
+                                printf("%d ", root->data);
+                                inorderTraversal(root->right);
+                            }
+                            
+                            int main(){
+                                int pre[10], in[10];
+                                Node *root = NULL;
+                            
+                                printf("Enter preorder traversal (seperated by space)\n");
+                                scanf("%d%d%d%d%d%d%d%d%d%d", &pre[0], &pre[1], &pre[2], &pre[3], &pre[4], &pre[5], &pre[6], &pre[7], &pre[8], &pre[9]);
+                                printf("Enter inorder traversal (seperated by space)\n");
+                                scanf("%d%d%d%d%d%d%d%d%d%d", &in[0], &in[1], &in[2], &in[3], &in[4], &in[5], &in[6], &in[7], &in[8], &in[9]);
+                                
+                            
+                                root = cntructTree(pre, in, 0, 9);
+                                inorderTraversal(root);
+                            }
+                                
+                    </pre>
+                    <h2 class="heading">output</h2>
+                    <pre>
+    Enter preorder traversal (seperated by space)
+    10 12 3 4 6 7 5 11 2 8 
+    Enter inorder traversal (seperated by space)
+    3 12 6 4 7 10 11 5 2 8 
+    Printing Inorder Traversal
+    3 12 6 4 7 10 11 5 2 8 
+                    </pre>
+                    <h2 class="heading"> BINARY TREE LEVEL ORDER TRAVERSAL</h2>
+                    <pre>
+                        #include&lt;stdio.h&gt;
+                            #include&lt;stdlib.h&gt;
+                            
+                            struct treeNode
+                            {
+                                int data;
+                                struct treeNode *left;
+                                struct treeNode *right;
+                            };
+                            typedef struct treeNode TreeNode;
+                            struct queueNode
+                            {
+                                TreeNode *data;
+                                struct queueNode *next;
+                            };
+                            typedef struct queueNode QueueNode;
+                            
+                            TreeNode* newNode(int val) {
+                                TreeNode* node = (TreeNode*)malloc(sizeof(TreeNode));
+                                node->data = val;
+                                node->left = NULL;
+                                node->right = NULL;
+                                return node;
+                            }
+                            
+                            int enqueue(QueueNode **rear, QueueNode **front, TreeNode *data)
+                            {
+                                QueueNode *nn;
+                                nn = (QueueNode *)malloc(sizeof(QueueNode));
+                                if (nn == NULL)
+                                {
+                                    return 0;
+                                }
+                                nn->data = data;
+                                nn->next = NULL;
+                                if (*front == NULL)
+                                {
+                                    *front = nn;
+                                }
+                                else
+                                {
+                                    (*rear)->next = nn;
+                                }
+                                *rear = nn;
+                                return 1;
+                            }
+                            
+                            TreeNode* dequeue(QueueNode **rear, QueueNode **front)
+                            {
+                                QueueNode *temp;
+                                if ((*front) == NULL)
+                                {
+                                    return NULL;
+                                }
+                                TreeNode *data = (*front)->data;
+                                temp = (*front);
+                                if ((*front) == (*rear))
+                                {
+                                    *front = *rear = NULL;
+                                }
+                                else{
+                                    (*front) = temp -> next;
+                                }
+                                free(temp);
+                                return data;
+                            }
+                            
+                            void levelOrderTraversal(TreeNode* root) {
+                                QueueNode *front, *rear;
+                                front = rear = NULL;
+                            
+                                if (root == NULL)
+                                    return;
+                            
+                                enqueue(&rear, &front, root);
+                            
+                                while (front != NULL) {
+                                    TreeNode* node = dequeue(&rear, &front);
+                                    printf("%d ", node->data);
+                            
+                                    if (node->left != NULL)
+                                        enqueue(&rear, &front, node->left);
+                                    if (node->right != NULL)
+                                        enqueue(&rear, &front, node->right);
+                                }
+                            }
+                            
+                            int main(){
+                                TreeNode* root = newNode(3);
+                                root->left = newNode(2);
+                                root->right = newNode(1);
+                                root->left->left = newNode(6);
+                                root->left->right = newNode(9);
+                                root->right->left = newNode(0);
+                                root->right->right = newNode(8);
+                            
+                                printf("Level Order Traversal: ");
+                                levelOrderTraversal(root);
+                                return 0;
+                            }
+                    </pre>
+                    <h2 class="heading">output</h2>
+                    <pre>
+                        Level Order Traversal: 3 2 1 6 9 0 8  
+                    </pre>
+                    <h2 class="heading">PRINT LEFT VIEW OF BINARY TREE</h2>
+                    <pre>
+                        #include&lt;stdio.h&gt;
+                            #include&lt;stdlib.h&gt;
+                            
+                            struct treeNode
+                            {
+                                int data;
+                                struct treeNode *left;
+                                struct treeNode *right;
+                            };
+                            typedef struct treeNode TreeNode;
+                            struct queueNode
+                            {
+                                TreeNode *data;
+                                struct queueNode *next;
+                            };
+                            typedef struct queueNode QueueNode;
+                            
+                            TreeNode* newNode(int val) {
+                                TreeNode* node = (TreeNode*)malloc(sizeof(TreeNode));
+                                node->data = val;
+                                node->left = NULL;
+                                node->right = NULL;
+                                return node;
+                            }
+                            
+                            int enqueue(QueueNode **rear, QueueNode **front, TreeNode *data)
+                            {
+                                QueueNode *nn;
+                                nn = (QueueNode *)malloc(sizeof(QueueNode));
+                                if (nn == NULL)
+                                {
+                                    return 0;
+                                }
+                                nn->data = data;
+                                nn->next = NULL;
+                                if (*front == NULL)
+                                {
+                                    *front = nn;
+                                }
+                                else
+                                {
+                                    (*rear)->next = nn;
+                                }
+                                *rear = nn;
+                                return 1;
+                            }
+                            
+                            TreeNode* dequeue(QueueNode **rear, QueueNode **front)
+                            {
+                                QueueNode *temp;
+                                if ((*front) == NULL)
+                                {
+                                    return NULL;
+                                }
+                                TreeNode *data = (*front)->data;
+                                temp = (*front);
+                                if ((*front) == (*rear))
+                                {
+                                    *front = *rear = NULL;
+                                }
+                                else{
+                                    (*front) = temp -> next;
+                                }
+                                free(temp);
+                                return data;
+                            }
+                            
+                            long queueSize(QueueNode *front){
+                                int i;
+                                for (i = 0; front != NULL; i++)
+                                    front = front->next;
+                                return i;
+                            }
+                            
+                            void printLeftView(TreeNode* root) {
+                                QueueNode *front, *rear;
+                                front = rear = NULL;
+                                if (root == NULL)
+                                    return;
+                            
+                                enqueue(&rear, &front, root);
+                            
+                                while (front != NULL) {
+                                    int levelSize = queueSize(front);
+                            
+                                    for (int i = 0; i < levelSize; i++) {
+                                        TreeNode* node = dequeue(&rear, &front);
+                                        if (i == 0) {
+                                            printf("%d ", node->data);
+                                        }
+                            
+                                        if (node->left != NULL)
+                                            enqueue(&rear, &front, node->left);
+                                        if (node->right != NULL)
+                                            enqueue(&rear, &front, node->right);
+                                    }
+                                }
+                            }
+                            
+                            int main(){
+                                TreeNode* root = newNode(1);
+                                root->left = newNode(2);
+                                root->right = newNode(3);
+                                root->left->left = newNode(4);
+                                root->left->right = newNode(5);
+                                root->right->right = newNode(7);
+                                root->right->left = newNode(8);
+                                root->right->right->left = newNode(10);
+                            
+                                printf("Left View: ");
+                                printLeftView(root);
+                                return 0;
+                            }
+                                
+                    </pre>
+                <h2 class="heading">output</h2>
+                <pre>
+                    Left View: 1 2 4 10 
+                </pre>
+                <h2 class="heading"> DISPLAY THE RIGHT VIEW OF BINARY TREE</h2>
+                <pre>
+                    #include&lt;stdio.h&gt;
+                        #include&lt;stdlib.h&gt;
+                        
+                        struct treeNode
+                        {
+                            int data;
+                            struct treeNode *left;
+                            struct treeNode *right;
+                        };
+                        typedef struct treeNode TreeNode;
+                        struct queueNode
+                        {
+                            TreeNode *data;
+                            struct queueNode *next;
+                        };
+                        typedef struct queueNode QueueNode;
+                        
+                        TreeNode* newNode(int val) {
+                            TreeNode* node = (TreeNode*)malloc(sizeof(TreeNode));
+                            node->data = val;
+                            node->left = NULL;
+                            node->right = NULL;
+                            return node;
+                        }
+                        
+                        int enqueue(QueueNode **rear, QueueNode **front, TreeNode *data)
+                        {
+                            QueueNode *nn;
+                            nn = (QueueNode *)malloc(sizeof(QueueNode));
+                            if (nn == NULL)
+                            {
+                                return 0;
+                            }
+                            nn->data = data;
+                            nn->next = NULL;
+                            if (*front == NULL)
+                            {
+                                *front = nn;
+                            }
+                            else
+                            {
+                                (*rear)->next = nn;
+                            }
+                            *rear = nn;
+                            return 1;
+                        }
+                        
+                        TreeNode* dequeue(QueueNode **rear, QueueNode **front)
+                        {
+                            QueueNode *temp;
+                            if ((*front) == NULL)
+                            {
+                                return NULL;
+                            }
+                            TreeNode *data = (*front)->data;
+                            temp = (*front);
+                            if ((*front) == (*rear))
+                            {
+                                *front = *rear = NULL;
+                            }
+                            else{
+                                (*front) = temp -> next;
+                            }
+                            free(temp);
+                            return data;
+                        }
+                        
+                        long queueSize(QueueNode *front){
+                            int i;
+                            for (i = 0; front != NULL; i++)
+                                front = front->next;
+                            return i;
+                        }
+                        
+                        void printRightView(TreeNode* root) {
+                            QueueNode *front, *rear;
+                            front = rear = NULL;
+                            if (root == NULL)
+                                return;
+                        
+                            enqueue(&rear, &front, root);
+                        
+                            while (front != NULL) {
+                                int levelSize = queueSize(front);
+                        
+                                for (int i = 0; i < levelSize; i++) {
+                                    TreeNode* node = dequeue(&rear, &front);
+                                    if (i == levelSize-1) {
+                                        printf("%d ", node->data);
+                                    }
+                        
+                                    if (node->left != NULL)
+                                        enqueue(&rear, &front, node->left);
+                                    if (node->right != NULL)
+                                        enqueue(&rear, &front, node->right);
+                                }
+                            }
+                        }
+                        
+                        int main(){
+                            TreeNode* root = newNode(1);
+                            root->left = newNode(22);
+                            root->right = newNode(34);
+                            root->left->left = newNode(45);
+                            root->left->right = newNode(57);
+                            root->right->left = newNode(6);
+                            root->right->right = newNode(79);
+                            root->right->left->right = newNode(8);
+                        
+                            printf("Right View: ");
+                            printRightView(root);
+                            return 0;
+                        }
+                            
+                </pre>
+                <h2 class="heading">Output</h2>
+                <pre>
+                    Right View: 1 34 79 8    
+                </pre>
+                <h2 class="heading">CONSTRUCT BINARY TREE FROM POSTORDER AND INORDER TRAVERSAL</h2>
+                <pre>
+                    #include&lt;stdio.h&gt;
+                        #include&lt;stdlib.h&gt;
+                        
+                        struct node
+                        {
+                            int data;
+                            struct node *left;
+                            struct node *right;
+                        };
+                        typedef struct node Node;
+                        
+                        Node* cntructTree(int preorder[], int inorder[], int inStart, int inEnd){
+                            static int crrInd = 0;
+                            int i;
+                            Node *root;
+                            if (inStart > inEnd)
+                                return NULL;
+                        
+                            root = (Node*)malloc(sizeof(Node));
+                            root->data = preorder[crrInd++];
+                            root->left = root->right = NULL;
+                        
+                            if (inStart == inEnd)
+                                return root;
+                        
+                            for (i = inStart; i <= inEnd; i++) {
+                                if (inorder[i] == root->data)
+                                    break;
+                            }
+                        
+                            root->left = cntructTree(preorder, inorder, inStart, i-1);
+                            root->right = cntructTree(preorder, inorder, i+1, inEnd);
+                        
+                            return root;
+                        }
+                        
+                        void inorderTraversal(Node* root) {
+                            if (root == NULL) {
+                                return;
+                            }
+                            inorderTraversal(root->left);
+                            printf("%d ", root->data);
+                            inorderTraversal(root->right);
+                        }
+                        
+                        int main(){
+                            int pre[10], in[10];
+                            Node *root = NULL;
+                        
+                            printf("Enter preorder traversal (seperated by space)\n");
+                            scanf("%d%d%d%d%d%d%d%d%d%d", &pre[0], &pre[1], &pre[2], &pre[3], &pre[4], &pre[5], &pre[6], &pre[7], &pre[8], &pre[9]);
+                            printf("Enter inorder traversal (seperated by space)\n");
+                            scanf("%d%d%d%d%d%d%d%d%d%d", &in[0], &in[1], &in[2], &in[3], &in[4], &in[5], &in[6], &in[7], &in[8], &in[9]);
+                            
+                
+                            root = cntructTree(pre, in, 0, 9);
+                            inorderTraversal(root);
+                        }
+                            
+                </pre>
+                <h2 class="heading">output</h2>
+                <pre>
+    Enter preorder traversal (seperated by space)
+    10 12 3 4 6 7 5 11 2 8 
+    Enter inorder traversal (seperated by space)
+    3 12 6 4 7 10 11 5 2 8 
+    Printing Inorder Traversal
+    3 12 6 4 7 10 11 5 2 8 
+                </pre>
+                <h2 class="heading">FIND THE MAXIMUM DEPTH OF BINARY TREE</h2>
+                <pre>
+                    #include&lt;stdio.h&gt;
+                        #include&lt;stdlib.h&gt;
+                        
+                        struct TreeNode {
+                            int val;
+                            struct TreeNode* left;
+                            struct TreeNode* right;
+                        };
+                        typedef struct TreeNode Node;
+                        Node* newNode(int val) {
+                            Node* node = (Node*)malloc(sizeof(Node));
+                            node->val = val;
+                            node->left = NULL;
+                            node->right = NULL;
+                            return node;
+                        }
+                        
+                        int maxDepth(Node* root) {
+                            if (root == NULL) {
+                                return 0;
+                            } else {
+                                int leftDepth = maxDepth(root->left);
+                                int rightDepth = maxDepth(root->right);
+                        
+                                return (leftDepth > rightDepth) ? (leftDepth + 1) : (rightDepth + 1);
+                            }
+                        }
+                        
+                        int main() {
+                            Node* root = newNode(22);
+                            root->left = newNode(24);
+                            root->right = newNode(36);
+                            root->left->left = newNode(40);
+                            root->left->right = newNode(57);
+                            root->left->left->left = newNode(54);
+                            int depth = maxDepth(root);
+                            printf("Maximum depth of the binary tree is: %d\n", depth);
+                        
+                            return 0;
+                        }
+                        
+                </pre>
+                <h2 class="heading">output</h2>
+                <pre>
+                    Maximum depth of the binary tree is: 4
+                </pre>
+                <h2 class="heading"> CREATE BINARY SEARCH TREE USING ARRAYS (INSERT, DELETE, SEARCH, PREORDER, INORDER, POSTORDER, MINIMUM ELEMENT)</h2>
+                <pre>
+                    #include&lt;stdio.h&gt;
+                        #include&lt;stdlib.h&gt;
+                        #include&lt;conio.h&gt;
+                        int count = 0;
+                        struct node
+                        {
+                            int Id;
+                            int data;
+                            struct node *left;
+                            struct node *right;
+                        };
+                        typedef struct node Node;
+                        Node* searchId(Node*, int);
+                        Node *initNode(int data)
+                        {
+                            Node *new = (Node *)malloc(sizeof(Node));
+                            new->data = data;
+                            new->left = new->right = NULL;
+                            count++;
+                            new->Id = count;
+                            return new;
+                        }
+                        int insert(Node *root, int lval, int rval, int id)
+                        {
+                            if (id > count)
+                            {
+                                return -1;
+                            }
+                            
+                            root = searchId(root, id);
+                            if (root == NULL)
+                            {
+                                return -1;
+                            }
+                            if (root->left == NULL)
+                            {
+                                root->left = initNode(lval);
+                                root->right = initNode(rval);
+                                printf("Id of Left Child----> %d\n", root->left->Id);
+                                printf("Id of Right Child----> %d\n", root->right->Id);
+                                return 1;
+                            }
+                            else if (root->left != NULL)
+                            {
+                                printf("This Id already have childrens. Do you want to override? Press y\n");
+                                if (getche() == 'y')
+                                {
+                                    root->left->data = lval;
+                                    root->right->data = rval;
+                                    printf("\nId of Left Child----> %d\n", root->left->Id);
+                                    printf("Id of Right Child----> %d\n", root->right->Id);
+                                    return 1;
+                                }
+                                else{
+                                    return -1;
+                                }
+                            }
+                        }
+                        
+                        Node* searchId(Node* root, int key)
+                        {
+                            Node* res = NULL;
+                            if (root == NULL)
+                                return NULL;
+                         
+                            if (root->Id == key)
+                                return root;
+                            if (root->Id == count)
+                                return NULL;
+                            
+                            res = searchId(root->left, key);
+                        
+                            if(res != NULL) return res; 
+                        
+                            res = searchId(root->right, key);
+                         
+                            return res;
+                        }
+                        
+                        void inOrder(Node *root){
+                            if (root == NULL)
+                                return;
+                            inOrder(root->left);
+                            printf("%d ", root->data);
+                            inOrder(root->right);
+                        }
+                        
+                        int main()
+                        {
+                            Node *root = NULL;
+                            char ch;
+                            int val1, val2, srch;
+                            printf("Enter Root Value\n");
+                            scanf("%d", &val1);
+                            root = initNode(val1);
+                            printf("Id of Root Element----> %d\n", root->Id);
+                            do
+                            {
+                                printf("Press 1 for Adding Children\nAny Other Key for exiting\n");
+                                ch = getche();
+                                if (ch == '1')
+                                {
+                                    printf("\nEnter Id of Node\n");
+                                    scanf("%d", &srch);
+                                    printf("Enter Value of Left Child\n");
+                                    scanf("%d", &val1);
+                                    printf("Enter Value of Right Child\n");
+                                    scanf("%d", &val2);
+                                    if (insert(root, val1, val2, srch) == -1)
+                                        printf("Insertion Failed\n");
+                                    else 
+                                        printf("Insertion Successfull\n");
+                                }
+                                else{
+                                    printf("\nExiting From Program\n");
+                                }
+                            } while (ch == '1');
+                            printf("Inorder Traversal:\n");
+                            inOrder(root);
+                        }
+                            
+                </pre>
+                <h2 class="heading">output</h2>
+                <pre>
+    Enter Root Value
+    58
+    Id of Root Element----> 1
+    Press 1 for Adding Children
+    Any Other Key for exiting
+    1
+    Enter Id of Node
+    1
+    Enter Value of Left Child
+    96
+    Enter Value of Right Child
+    78
+    Id of Left Child----> 2
+    Id of Right Child----> 3
+    Insertion Successfull
+    Press 1 for Adding Children
+    Any Other Key for exiting
+    1
+    Enter Id of Node
+    2
+    Enter Value of Left Child
+    89
+    Enter Value of Right Child
+    55
+    Id of Left Child----> 4
+    Id of Right Child----> 5
+    Insertion Successfull
+    Press 1 for Adding Children
+    Any Other Key for exiting
+    5
+    Exiting From Program
+    Inorder Traversal:
+    89 96 55 58 78   
+                </pre>
+                <h2 class="heading">CREATE BINARY SEARCH TREE DYNAMICALLY (INSERT, DELETE, SEARCH, PREORDER, INORDER, POSTORDER, MINIMUM ELEMENT)</h2>
+                <pre>
+                    #include&lt;stdio.h&gt;
+                        #include&lt;stdlib.h&gt;
+                        #include&lt;conio.h&gt;
+                        struct node
+                        {
+                            int data;
+                            struct node *left;
+                            struct node *right;
+                        };
+                        typedef struct node Node;
+                        
+                        Node* initNode(int data){
+                            Node *new = (Node*)malloc(sizeof(Node));
+                            new->data = data;
+                            new->left = new->right = NULL;
+                            return new;
+                        }
+                        
+                        int insert(Node *root, int val){
+                            Node *prev = NULL, *newnode;
+                            if (root == NULL)
+                            {
+                                root = initNode(val);
+                                return 1;
+                            }
+                            
+                            while (root != NULL)
+                            {
+                                prev = root;
+                                if (val == root->data)
+                                {
+                                    printf("%d already in Binary Search Tree\n", val);
+                                    return 0;
+                                }
+                                else if (val < root->data)
+                                    root = root->left;
+                                else
+                                    root = root->right;
+                            }
+                            newnode = initNode(val);
+                            if (val < prev->data)
+                                prev->left = newnode;
+                            else
+                                prev->right = newnode;
+                            return 1;
+                        }
+                        
+                        Node* preDecFinder(Node *root){
+                            root = root->left;
+                            while (root->right != NULL)
+                                root = root->right;
+                            return root;
+                        }
+                        
+                        Node* delete(Node *root, int val){
+                            Node *predecessor;
+                            if (root == NULL)
+                                return NULL;
+                        
+                            if (root->left == NULL && root->right == NULL){
+                                free(root);
+                                return NULL;    
+                            }
+                        
+                            if (val < root -> data)
+                                root->left = delete(root->left, val);
+                            else if (val > root -> data)
+                                root->right = delete(root->right, val);
+                            else{
+                                predecessor = preDecFinder(root);
+                                root->data = predecessor->data;
+                                root->left = delete(root->left, predecessor->data);
+                            }    
+                            return root;    
+                        }
+                        
+                        int search(Node *root, int val){
+                            while (root != NULL)
+                            {
+                                if (val == root->data)
+                                {
+                                    return 1;
+                                }
+                                else if (val < root->data)
+                                    root = root->left;
+                                else
+                                    root = root->right;
+                            }
+                            return 0;
+                        }
+                        
+                        void preOrder(Node *root){
+                            if (root == NULL)
+                                return;
+                            printf("%d ", root->data);
+                            preOrder(root->left); 
+                            preOrder(root->right);      
+                        }
+                        
+                        void inOrder(Node *root){
+                            if (root == NULL)
+                                return;
+                            preOrder(root->left); 
+                            printf("%d ", root->data);
+                            preOrder(root->right);      
+                        }
+                        
+                        void postOrder(Node *root){
+                            if (root == NULL)
+                                return;
+                            preOrder(root->left); 
+                            preOrder(root->right);      
+                            printf("%d ", root->data);
+                        }
+                        
+                        int minValue(Node* root)
+                        { 
+                            while (root->left != NULL) {
+                                root = root->left;
+                            }
+                            return (root->data);
+                        }
+                        
+                        int main(){
+                            Node *root = NULL;
+                            char ch;
+                            int val;
+                            printf("Enter Root Value of BST\t");
+                            scanf("%d", &val);
+                            root = initNode(val); 
+                            if (root != NULL)
+                                printf("%d inserted to root of BST\n", val);
+                            
+                            do
+                            {
+                                printf("Press 1: Insert\nPress 2: Delete\nPress 3: Search\nPress 4: Traversal\nPress 5: Minimum Element\nPress 6: Exit\n");
+                                ch = getche();
+                                printf("\n");
+                                if (ch == '1')
+                                {
+                                    printf("Enter Value to be inserted in BST\t");
+                                    scanf("%d", &val);
+                                    if (insert(root, val))
+                                        printf("%d inserted to BST\n", val);            
+                                }
+                                else if (ch == '2')
+                                {
+                                    printf("Enter Value to be deleted from BST\t");
+                                    scanf("%d", &val);
+                                    if (delete(root, val) != NULL)
+                                        printf("%d deleted from BST\n", val);     
+                                    else
+                                        printf("%d not available in BST\n", val);
+                                }
+                                else if (ch == '3')
+                                {
+                                    printf("Enter Value to be Searched in BST\t");
+                                    scanf("%d", &val);
+                                    if (search(root, val))
+                                        printf("%d found in BST\n", val);     
+                                    else
+                                        printf("%d not available in BST\n", val);
+                                }
+                                else if (ch == '4')
+                                {
+                                    printf("Press 1: PreOrder Traversal\nPress 2: InOrder Traversal\nPress 3: PostOrder Traversal\n");
+                                    ch = getche();
+                                    printf("\n");
+                                    if (ch == '1')
+                                        preOrder(root);
+                                    else if (ch == '2')
+                                        inOrder(root);
+                                    else if (ch == '3')
+                                        postOrder(root);
+                                    else
+                                        printf("Invalid Traversal Option\n");
+                                    printf("\n");
+                                }
+                                else if (ch == '5')
+                                {
+                                    if (root == NULL)
+                                        printf("Tree is Empty\n");
+                                    else
+                                        printf("Minimum value of BST is %d\n",minValue(root));            
+                                }
+                                else if (ch == '6')
+                                    printf("Exitting From the Program....\n");
+                                else
+                                    printf("Invalid Option\n");        
+                            } while (ch != '6');
+                            
+                        
+                            return 0;
+                        }
+                </pre>
+                <h2 class="heading">output</h2>
+                <pre>
+                    Enter Root Value of BST 89
+                    89 inserted to root of BST
+                    Press 1: Insert
+                    Press 2: Delete
+                    Press 3: Search
+                    Press 4: Traversal
+                    Press 5: Minimum Element
+                    Press 6: Exit
+                    4
+                    Press 1: PreOrder Traversal
+                    Press 2: InOrder Traversal
+                    Press 3: PostOrder Traversal
+                    2
+                    89 
+                    Press 1: Insert
+                    Press 2: Delete
+                    Press 3: Search
+                    Press 4: Traversal
+                    Press 5: Minimum Element
+                    Press 6: Exit
+                    1
+                    Enter Value to be inserted in BST       48
+                    48 inserted to BST
+                    Press 1: Insert
+                    Press 2: Delete
+                    Press 3: Search
+                    Press 4: Traversal
+                    Press 5: Minimum Element
+                    Press 6: Exit
+                    1
+                    Enter Value to be inserted in BST       99
+                    99 inserted to BST
+                    Press 1: Insert
+                    Press 2: Delete
+                    Press 3: Search
+                    Press 4: Traversal
+                    Press 5: Minimum Element
+                    Press 6: Exit
+                    4
+                    Press 1: PreOrder Traversal
+                    Press 2: InOrder Traversal
+                    Press 3: PostOrder Traversal
+                    2
+                    48 89 99
+                    Press 1: Insert
+                    Press 2: Delete
+                    Press 3: Search
+                    Press 4: Traversal
+                    Press 5: Minimum Element
+                    Press 6: Exit
+                    3
+                    Enter Value to be Searched in BST       89
+                    89 found in BST
+                    Press 1: Insert
+                    Press 2: Delete
+                    Press 3: Search
+                    Press 4: Traversal
+                    Press 5: Minimum Element
+                    Press 6: Exit
+                    5
+                    Minimum value of BST is 48
+                    Press 1: Insert
+                    Press 2: Delete
+                    Press 3: Search
+                    Press 4: Traversal
+                    Press 5: Minimum Element
+                    Press 6: Exit
+                    2
+                    Enter Value to be deleted from BST      48
+                    48 deleted from BST
+                    Press 1: Insert
+                    Press 2: Delete
+                    Press 3: Search
+                    Press 4: Traversal
+                    Press 5: Minimum Element
+                    Press 6: Exit
+                    5
+                    Minimum value of BST is 89
+                    Press 1: Insert
+                    Press 2: Delete
+                    Press 3: Search
+                    Press 4: Traversal
+                    Press 5: Minimum Element
+                    Press 6: Exit
+                    6
+                    Exitting From the Program....
+                </pre>
+                <h2 class="heading">FIND INORDER PREDECESSOR AND INORDER SUCCESSOR OF BINARY SEARCH TREE (DYNAMICALLY REPRESENTED)</h2>
+                <pre>
+                    #include&lt;stdio.h&gt;
+                        #include&lt;stdlib.h&gt;
+                        #include&lt;conio.h&gt;
+                        struct node
+                        {
+                            int data;
+                            struct node *left;
+                            struct node *right;
+                        };
+                        typedef struct node Node;
+                        
+                        Node* initNode(int data){
+                            Node *new = (Node*)malloc(sizeof(Node));
+                            new->data = data;
+                            new->left = new->right = NULL;
+                            return new;
+                        }
+                        
+                        int insert(Node *root, int val){
+                            Node *prev = NULL, *newnode;
+                            if (root == NULL)
+                            {
+                                root = initNode(val);
+                                return 1;
+                            }
+                            
+                            while (root != NULL)
+                            {
+                                prev = root;
+                                if (val == root->data)
+                                {
+                                    printf("%d already in Binary Search Tree\n", val);
+                                    return 0;
+                                }
+                                else if (val < root->data)
+                                    root = root->left;
+                                else
+                                    root = root->right;
+                            }
+                            newnode = initNode(val);
+                            if (val < prev->data)
+                                prev->left = newnode;
+                            else
+                                prev->right = newnode;
+                            return 1;
+                        }
+                        
+                        Node* inPredecFinder(Node *root){
+                            root = root->left;
+                            while (root->right != NULL)
+                                root = root->right;
+                            return root;
+                        }
+                        
+                        Node* inSucFinder(Node *root){
+                            root = root->right;
+                            while (root->left != NULL)
+                                root = root->left;
+                            return root;
+                        }
+                        
+                        void inorderTraversal(Node* root) {
+                            if (root == NULL) {
+                                return;
+                            }
+                            inorderTraversal(root->left);
+                            printf("%d ", root->data);
+                            inorderTraversal(root->right);
+                        }
+                        
+                        int main(){
+                            Node *root = NULL, *predec, *successor;
+                            int val, i;
+                            printf("Enter Root Value\n");
+                            scanf("%d", &val);
+                            root = initNode(val);
+                            for (i = 0; i < 7; i++){
+                                printf("Enter Value to be inserted\n");
+                                scanf("%d", &val);
+                                insert(root, val);
+                            }
+                            inorderTraversal(root);
+                            predec = inPredecFinder(root);
+                            successor = inSucFinder(root);
+                            if (predec == NULL)
+                                printf("Inorder Predecessor Not Available in this BST\n");
+                            else
+                                printf("\nInorder Predecessor of Above Tree is %d\n", predec->data);
+                            if (successor == NULL)
+                                printf("Inorder Successor Not Available in this BST\n");
+                            else
+                                printf("\nInorder Successor of Above Tree is %d\n", successor->data);
+                            return 0;
+                        }
+                </pre>
+                <h2 class="heading">output</h2>
+                <pre>
+                    Enter Root Value
+                    50
+                    Enter Value to be inserted
+                    30
+                    Enter Value to be inserted
+                    20
+                    Enter Value to be inserted
+                    40
+                    Enter Value to be inserted
+                    70
+                    Enter Value to be inserted
+                    60
+                    Enter Value to be inserted
+                    80
+                    Enter Value to be inserted
+                    8
+                    8 20 30 40 50 60 70 80 
+                    Inorder Predecessor of Above Tree is 40
+                    
+                    Inorder Successor of Above Tree is 60
+                </pre>
+                <h2 class="heading">FIND KTH LARGEST ELEMENT IN BINARY SEARCH TREE THROUGH ARRAY</h2>
+                <pre>
+                    #include&lt;stdio.h&gt;
+                        #define MAX 30
+                        int tree[MAX];
+                        int size = 0;
+                        
+                        void insert(int val)
+                        {
+                            if (size == MAX)
+                            {
+                                printf("Tree is Full!");
+                                return;
+                            }
+                            if (size == 0)
+                            {
+                                tree[0] = val;
+                                size++;
+                                return;
+                            }
+                            int i = 0;
+                            while (i < MAX && tree[i] != -1)
+                            {
+                                if (val < tree[i])
+                                {
+                                    i = 2 * i + 1;
+                                }
+                                else if (val > tree[i])
+                                {
+                                    i = 2 * i + 2;
+                                }
+                                else
+                                {
+                                    printf("Duplicate is not allowed!");
+                                    break;
+                                }
+                            }
+                            if (i < MAX)
+                            {
+                                tree[i] = val;
+                                size++;
+                            }
+                            else
+                            {
+                                printf("Tree is Full!");
+                                return;
+                            }
+                        }
+                        
+                        int kthLargest(int index, int k)
+                        {
+                            static int i;
+                            if (index >= MAX || index < 0 || k <= 0 || k > size)
+                            {
+                                return -1;
+                            }
+                            int leftIndx = 2 * index + 1;
+                            int rightIndx = 2 * index + 2;
+                            if (tree[leftIndx] != -1){
+                                kthLargest(leftIndx, k);
+                            }
+                            i++;
+                            if (i == size-k+1)
+                                printf("%dth Largest Element is %d\n", k, tree[index]);
+                            if (tree[rightIndx] != -1){
+                                kthLargest(rightIndx, k);
+                            }
+                            return 1;
+                        }
+                        int main(){
+                            for (int i = 0; i < MAX; i++)
+                            {
+                                tree[i] = -1;
+                            }
+                            insert(92);
+                            insert(2585);
+                            insert(75);
+                            insert(22);
+                            insert(35);
+                            insert(1);
+                            if (kthLargest(0, 2) != 1)
+                            {
+                                printf("Invalid k\n");
+                            }
+                            return 0;
+                        }
+                            
+                </pre>
+                <h2 class="heading">output</h2>
+                <pre>
+                    2th Largest Element is 92
+                </pre>
+              <h2 class="heading">FIND KTH SMALLEST ELEMENT IN A BINARY SEARCH TREE THROUGH ARRAY</h2>
+              <pre>
+                #include&lt;stdio.h&gt;
+                    #define MAX 30
+                    int tree[MAX];
+                    int size = 0;
+                    
+                    void insert(int val)
+                    {
+                        if (size == MAX)
+                        {
+                            printf("Tree is Full!");
+                            return;
+                        }
+                        if (size == 0)
+                        {
+                            tree[0] = val;
+                            size++;
+                            return;
+                        }
+                        int i = 0;
+                        while (i < MAX && tree[i] != -1)
+                        {
+                            if (val < tree[i])
+                            {
+                                i = 2 * i + 1;
+                            }
+                            else if (val > tree[i])
+                            {
+                                i = 2 * i + 2;
+                            }
+                            else
+                            {
+                                printf("Duplicate is not allowed!");
+                                break;
+                            }
+                        }
+                        if (i < MAX)
+                        {
+                            tree[i] = val;
+                            size++;
+                        }
+                        else
+                        {
+                            printf("Tree is Full!");
+                            return;
+                        }
+                    }
+                    
+                    int kthSmallest(int index, int k)
+                    {
+                        static int i;
+                        if (index >= MAX || index < 0 || k <= 0 || k > size)
+                        {
+                            return -1;
+                        }
+                        int leftIndx = 2 * index + 1;
+                        int rightIndx = 2 * index + 2;
+                        if (tree[leftIndx] != -1){
+                            kthSmallest(leftIndx, k);
+                        }
+                        i++;
+                        if (i == size-k+1)
+                            printf("%dth Smallest Element is %d\n", k, tree[index]);
+                        if (tree[rightIndx] != -1){
+                            kthSmallest(rightIndx, k);
+                        }
+                        return 1;
+                    }
+                    int main(){
+                        for (int i = 0; i < MAX; i++)
+                        {
+                            tree[i] = -1;
+                        }
+                        insert(92);
+                        insert(2585);
+                        insert(75);
+                        insert(22);
+                        insert(35);
+                        insert(1);
+                        if (kthSmallest(0, 6) != 1)
+                        {
+                            printf("Invalid k\n");
+                        }
+                        return 0;
+                    }
+                        
+              </pre>
+              <h2 class="heading">output</h2>
+              <pre>
+                6th Smallest Element is 1
+              </pre>
+           <h2 class="heading">CONSTRUCT BINARY SEARCH TREE FROM GIVEN PREORDER TRAVERSAL THROUGH ARRAYS</h2>
+           <pre>
+            #include&lt;stdio.h&gt;
+                #define MAX 30
+                int tree[MAX];
+                int size = 0;
+                
+                void insert(int val)
+                {
+                    if (size == MAX)
+                    {
+                        printf("Tree is Full!");
+                        printf("UP");
+                        return;
+                    }
+                    if (size == 0)
+                    {
+                        tree[0] = val;
+                        size++;
+                        return;
+                    }
+                    int i = 0;
+                    while (i < MAX && tree[i] != -1)
+                    {
+                        if (val < tree[i])
+                        {
+                            i = 2 * i + 1;
+                        }
+                        else if (val > tree[i])
+                        {
+                            i = 2 * i + 2;
+                        }
+                        else
+                        {
+                            printf("Duplicate is not allowed!");
+                            break;
+                        }
+                    }
+                    if (i < MAX)
+                    {
+                        tree[i] = val;
+                        size++;
+                    }
+                    else
+                    {
+                        printf("Tree is Full!");
+                        printf("Down");
+                        return;
+                    }
+                }
+                
+                void BSTfromPreOrder(int pre[], int n){
+                    int i;
+                    for (i = 0; i < n; i++)
+                    {
+                        insert(pre[i]);
+                    }   
+                }
+                
+                void postOrder(int index)
+                {
+                    if (index >= MAX || index < 0)
+                    {
+                        return;
+                    }
+                    int leftIndx = 2 * index + 1;
+                    int rightIndx = 2 * index + 2;
+                    if (tree[leftIndx] != -1)
+                        postOrder(leftIndx);
+                    if (tree[rightIndx] != -1)
+                        postOrder(rightIndx);
+                    printf("%d ", tree[index]);
+                }
+                
+                int main(){
+                    for (int i = 0; i < MAX; i++)
+                    {
+                        tree[i] = -1;
+                    }
+                    int pre[] = {4,2,1,3,6,5,7};
+                    BSTfromPreOrder(pre, 7);
+                    printf("Printing Postorder\n");
+                    postOrder(0);
+                }
+                    
+           </pre>
+           <h2 class="heading">output</h2>
+           <pre>
+            Printing Postorder
+            1 3 2 5 7 6 4 
+           </pre>
+           <h2 class="heading"> CONSTRUCT BINARY SEARCH TREE FROM GIVEN POSTORDER TRAVERSAL THROUGH ARRAYS</h2>
+           <pre>
+            #include&lt;stdio.h&gt;
+                #define MAX 30
+                int tree[MAX];
+                int size = 0;
+                
+                void insert(int val)
+                {
+                    if (size == MAX)
+                    {
+                        printf("Tree is Full!");
+                        printf("UP");
+                        return;
+                    }
+                    if (size == 0)
+                    {
+                        tree[0] = val;
+                        size++;
+                        return;
+                    }
+                    int i = 0;
+                    while (i < MAX && tree[i] != -1)
+                    {
+                        if (val < tree[i])
+                        {
+                            i = 2 * i + 1;
+                        }
+                        else if (val > tree[i])
+                        {
+                            i = 2 * i + 2;
+                        }
+                        else
+                        {
+                            printf("Duplicate is not allowed!");
+                            break;
+                        }
+                    }
+                    if (i < MAX)
+                    {
+                        tree[i] = val;
+                        size++;
+                    }
+                    else
+                    {
+                        printf("Tree is Full!");
+                        printf("Down");
+                        return;
+                    }
+                }
+                
+                void BSTfromPostOrder(int pre[], int n){
+                    int i;
+                    for (i = 0; i < n; i++)
+                    {
+                        insert(pre[n-i-1]);
+                    }   
+                }
+                
+                void preOrder(int index)
+                {
+                    if (index >= MAX || index < 0)
+                    {
+                        return;
+                    }
+                    printf("%d ", tree[index]);
+                    int leftIndx = 2 * index + 1;
+                    int rightIndx = 2 * index + 2;
+                    if (tree[leftIndx] != -1)
+                        preOrder(leftIndx);
+                    if (tree[rightIndx] != -1)
+                        preOrder(rightIndx);
+                }
+                
+                
+                int main(){
+                    for (int i = 0; i < MAX; i++)
+                    {
+                        tree[i] = -1;
+                    }
+                    int post[] = {1, 3, 2, 5, 7, 6, 4};
+                    BSTfromPostOrder(post, 7);
+                    printf("Printing Preorder\n");
+                    preOrder(0);
+                }
+           </pre>
+           <h2 class="heading">output</h2>
+           <pre>
+            Printing PreOrder
+            4 2 1 3 6 5 7
+           </pre>
+           <h2 class="heading"> CREATE STRICTLY BINARY TREE FROM THE GIVEN INPUT BY THE USER (DYNAMICALLY)</h2>
+           <pre>
+            #include&lt;stdio.h&gt;
+                #include&lt;stdlib.h&gt;
+                #include&lt;conio.h&gt;
+                int count = 0;
+                struct node
+                {
+                    int Id;
+                    int data;
+                    struct node *left;
+                    struct node *right;
+                };
+                typedef struct node Node;
+                Node* searchId(Node*, int);
+                Node *initNode(int data)
+                {
+                    Node *new = (Node *)malloc(sizeof(Node));
+                    new->data = data;
+                    new->left = new->right = NULL;
+                    count++;
+                    new->Id = count;
+                    return new;
+                }
+                int insert(Node *root, int lval, int rval, int id)
+                {
+                    if (id > count)
+                    {
+                        return -1;
+                    }
+                    
+                    root = searchId(root, id);
+                    if (root == NULL)
+                    {
+                        return -1;
+                    }
+                    if (root->left == NULL)
+                    {
+                        root->left = initNode(lval);
+                        root->right = initNode(rval);
+                        printf("Id of Left Child----> %d\n", root->left->Id);
+                        printf("Id of Right Child----> %d\n", root->right->Id);
+                        return 1;
+                    }
+                    else if (root->left != NULL)
+                    {
+                        printf("This Id already have childrens. Do you want to override? Press y\n");
+                        if (getche() == 'y')
+                        {
+                            root->left->data = lval;
+                            root->right->data = rval;
+                            printf("\nId of Left Child----> %d\n", root->left->Id);
+                            printf("Id of Right Child----> %d\n", root->right->Id);
+                            return 1;
+                        }
+                        else{
+                            return -1;
+                        }
+                    }
+                }
+                
+                Node* searchId(Node* root, int key)
+                {
+                    Node* res = NULL;
+                    if (root == NULL)
+                        return NULL;
+                 
+                    if (root->Id == key)
+                        return root;
+                    if (root->Id == count)
+                        return NULL;
+                    
+                    res = searchId(root->left, key);
+                
+                    if(res != NULL) return res; 
+                
+                    res = searchId(root->right, key);
+                 
+                    return res;
+                }
+                
+                void inOrder(Node *root){
+                    if (root == NULL)
+                        return;
+                    inOrder(root->left);
+                    printf("%d ", root->data);
+                    inOrder(root->right);
+                }
+                
+                int main()
+                {
+                    Node *root = NULL;
+                    char ch;
+                    int val1, val2, srch;
+                    printf("Enter Root Value\n");
+                    scanf("%d", &val1);
+                    root = initNode(val1);
+                    printf("Id of Root Element----> %d\n", root->Id);
+                    do
+                    {
+                        printf("Press 1 for Adding Children\nAny Other Key for exiting\n");
+                        ch = getche();
+                        if (ch == '1')
+                        {
+                            printf("\nEnter Id of Node\n");
+                            scanf("%d", &srch);
+                            printf("Enter Value of Left Child\n");
+                            scanf("%d", &val1);
+                            printf("Enter Value of Right Child\n");
+                            scanf("%d", &val2);
+                            if (insert(root, val1, val2, srch) == -1)
+                                printf("Insertion Failed\n");
+                            else 
+                                printf("Insertion Successfull\n");
+                        }
+                        else{
+                            printf("\nExiting From Program\n");
+                        }
+                    } while (ch == '1');
+                    printf("Inorder Traversal:\n");
+                    inOrder(root);
+                }            
+           </pre>
+           <h2 class="heading">output</h2>
+           <pre>
+            Enter Root Value
+            58
+            Id of Root Element----> 1
+            Press 1 for Adding Children
+            Any Other Key for exiting
+            1
+            Enter Id of Node
+            1
+            Enter Value of Left Child
+            96
+            Enter Value of Right Child
+            78
+            Id of Left Child----> 2
+            Id of Right Child----> 3
+            Insertion Successfull
+            Press 1 for Adding Children
+            Any Other Key for exiting
+            1
+            Enter Id of Node
+            2
+            Enter Value of Left Child
+            89
+            Enter Value of Right Child
+            55
+            Id of Left Child----> 4
+            Id of Right Child----> 5
+            Insertion Successfull
+            Press 1 for Adding Children
+            Any Other Key for exiting
+            5
+            Exiting From Program
+            Inorder Traversal:
+            89 96 55 58 78   
+           </pre>
+           <h2 class="heading">COUNT THE NUMBER OF NODES IN BINARY SEARCH TREE CONSTRUCTED DYNAMICALLY</h2>
+           <pre>
+            #include&lt;stdio.h&gt;
+                #include&lt;stdlib.h&gt;
+                #include&lt;conio.h&gt;
+                struct node
+                {
+                    int data;
+                    struct node *left;
+                    struct node *right;
+                };
+                typedef struct node Node;
+                
+                Node* initNode(int data){
+                    Node *new = (Node*)malloc(sizeof(Node));
+                    new->data = data;
+                    new->left = new->right = NULL;
+                    return new;
+                }
+                
+                int insert(Node *root, int val){
+                    Node *prev = NULL, *newnode;
+                    if (root == NULL)
+                    {
+                        root = initNode(val);
+                        return 1;
+                    }
+                    
+                    while (root != NULL)
+                    {
+                        prev = root;
+                        if (val == root->data)
+                        {
+                            printf("%d already in Binary Search Tree\n", val);
+                            return 0;
+                        }
+                        else if (val < root->data)
+                            root = root->left;
+                        else
+                            root = root->right;
+                    }
+                    newnode = initNode(val);
+                    if (val < prev->data)
+                        prev->left = newnode;
+                    else
+                        prev->right = newnode;
+                    return 1;
+                }
+                
+                int countNodes(Node *root){
+                    if (root == NULL)
+                    {
+                        return 0;
+                    }
+                    return countNodes(root->left)+countNodes(root->right)+1;
+                }
+                int main(){
+                    Node *root = initNode(10);
+                    insert(root, 29);
+                    insert(root, 5);
+                    insert(root, 4);
+                    insert(root, 55);
+                    insert(root, 12);
+                    insert(root, 155);
+                    insert(root, 2);
+                    printf("Total Number of Nodes:\t%d", countNodes(root));
+                }
+                    
+           </pre>
+           <h2 class="heading">output</h2>
+           <pre>
+            Total Number of Nodes:  8
+           </pre>
